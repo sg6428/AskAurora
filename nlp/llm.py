@@ -1,6 +1,7 @@
 from ollama import chat, Client
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 
@@ -16,8 +17,7 @@ def query_llm_for_qa(asked_question, top_sentences, model = "gpt-oss:20b-cloud")
         {
             "role": "system", "content": "You are a helpful assistant that provides answers based on the provided context.\
                 You will be given a question and some context sentences. Use the context to answer the question as accurately as possible.\
-                Respond only in following JSON format: {\"answer\": \"your answer here\"}\
-                If the context does not contain enough information, respond with: {\"answer\": \"Insufficient Information.\"}"
+                Respond only in following JSON format: {\"answer\": \"your answer here\"}"
         },
         {
             "role": "user", "content": f"question:{asked_question}, context sentences:{top_sentences}"
@@ -25,5 +25,5 @@ def query_llm_for_qa(asked_question, top_sentences, model = "gpt-oss:20b-cloud")
     ]
 
     response = client.chat(model, messages=messages, stream=False)
-        
-    return response['message']['content']
+    asnwer_json = json.loads(response['message']['content'])
+    return asnwer_json

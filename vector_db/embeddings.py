@@ -1,5 +1,4 @@
 from sentence_transformers import SentenceTransformer
-from index import FaissIndex
 import numpy as np
 import json, os
 
