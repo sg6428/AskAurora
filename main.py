@@ -5,13 +5,11 @@ from vector_db.index import FaissIndex
 from nlp.llm import query_llm_for_qa
 import os
 from pydantic import BaseModel
-from config import config
 
-raw_data_dir = config["raw_data_dir"]
-api_url = config["api_url"]
-page_limit = config["page_limit"]
-model = config["model"]
-
+raw_data_dir = os.getenv("RAW_DATA_DIR", "data/raw_data")
+api_url = os.getenv("API_URL", "https://november7-730026606190.europe-west1.run.app/messages")
+page_limit = int(os.getenv("PAGE_LIMIT", 500))
+model = os.getenv("MODEL", "gpt-oss:20b-cloud")
 
 # Initialize FAISS index and sentences list
 faiss_index = FaissIndex(dim=384)

@@ -1,9 +1,6 @@
 from ollama import Client
-from dotenv import load_dotenv
 import os
 import json
-
-load_dotenv()
 
 client_api_key = os.getenv("OLLAMA_API_KEY")
 

@@ -1,0 +1,8 @@
+requests
+ollama
+faiss-cpu
+sentence-transformers
+fastapi
+uvicorn
+pydantic
+python-dotenv
