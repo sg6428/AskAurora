@@ -2,7 +2,7 @@ import requests
 
 def test_ask_api():
     url = "http://127.0.0.1:8000/ask"
-    payload = {"question": "What is Hans Muller's address?"}
+    payload = {"question": "Give information about Vikram's party"}
     
     response = requests.post(url, json=payload)
     

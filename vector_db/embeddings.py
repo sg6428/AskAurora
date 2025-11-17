@@ -13,7 +13,7 @@ def create_user_msg_pair(data):
     return user_msg_pairs
 
 def transform_data(raw_data_dir, faiss_index):
-    # read all json files in raw_data directory one by one
+    # Read all json files in raw_data directory one by one
     sentences = []
     for filename in os.listdir(raw_data_dir):
         if filename.endswith(".json"):
@@ -25,7 +25,7 @@ def transform_data(raw_data_dir, faiss_index):
     return sentences
 
 def create_embeddings_raw_data(sentences, faiss_index):
-    # generate embeddings
+    # Generate embeddings
     embeddings = MODEL.encode(sentences)
     embeddings = np.array(embeddings).astype('float32')
     faiss_index.add_embeddings(embeddings)

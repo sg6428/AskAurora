@@ -1,4 +1,4 @@
-from ollama import chat, Client
+from ollama import Client
 from dotenv import load_dotenv
 import os
 import json
@@ -12,7 +12,7 @@ client = Client(
     headers={"Authorization": f"Bearer {client_api_key}"}
 )
 
-def query_llm_for_qa(asked_question, top_sentences, model = "gpt-oss:20b-cloud"):
+def query_llm_for_qa(asked_question, top_sentences, model="gpt-oss:20b-cloud"):
     messages = [
         {
             "role": "system", "content": "You are a helpful assistant that provides answers based on the provided context.\
@@ -25,5 +25,6 @@ def query_llm_for_qa(asked_question, top_sentences, model = "gpt-oss:20b-cloud")
     ]
 
     response = client.chat(model, messages=messages, stream=False)
-    asnwer_json = json.loads(response['message']['content'])
-    return asnwer_json
+    answer_json = json.loads(response['message']['content'])
+
+    return answer_json
