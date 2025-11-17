@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: askaurora_app:latest
+    image: ask-aurora-app:latest
     ports:
       - "8000:8000"
     environment:
@@ -10,7 +10,7 @@ services:
       - API_URL=https://november7-730026606190.europe-west1.run.app/messages
       - PAGE_LIMIT=500
       - MODEL=gpt-oss:20b-cloud
-      - OLLAMA_API_KEY=<insert_your_key_here>
+      - OLLAMA_API_KEY=<insert_ollama_key>
     volumes:
       - .:/app
     command: uvicorn main:app --host 0.0.0.0 --port 8000
