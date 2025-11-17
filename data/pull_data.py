@@ -2,11 +2,15 @@ import requests
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
+import os
 
 API_URL = "https://november7-730026606190.europe-west1.run.app/messages"
-PAGE_LIMIT = 500  # Number of items per request (adjust as needed)
+PAGE_LIMIT = 500
 all_results = []
-raw_data_file_path = "AskAurora/raw_data/raw"
+
+def create_raw_data_dir(raw_data_dir="./raw_data"):
+    if not os.path.exists(raw_data_dir):
+        os.makedirs(raw_data_dir)
 
 def fetch_page(skip):
     params = {"skip": skip, "limit": PAGE_LIMIT}
@@ -14,7 +18,10 @@ def fetch_page(skip):
     response.raise_for_status()
     return response.json().get('items', [])
 
-def fetch_all_messages():
+def pull_data(raw_data_dir="./raw_data"):
+    # Check if raw_data directory exists, if not create it
+    create_raw_data_dir(raw_data_dir)
+
     # Get total number of messages
     resp = requests.get(API_URL, params={"skip": 0, "limit": 1})
     resp.raise_for_status()
@@ -29,11 +36,14 @@ def fetch_all_messages():
         # Insert messages into the json file
         # Generate timestamped filename till milliseconds
         ts = str(time.time()).replace('.', '_')
-        with open(f'{raw_data_file_path}_{ts}.json', 'w') as f:
+        with open(f'{raw_data_dir}/raw_{ts}.json', 'w') as f:
             json.dump(page_messages, f, indent=4)
 
 # Alternative function for a thread-based approach
-def fetch_all_messages_threaded():
+def pull_data_threaded(raw_data_dir="./raw_data"):
+    # Check if raw_data directory exists, if not create it
+    create_raw_data_dir(raw_data_dir)
+
     # Get total number of messages
     resp = requests.get(API_URL, params={"skip": 0, "limit": 1})
     resp.raise_for_status()
@@ -49,8 +59,8 @@ def fetch_all_messages_threaded():
             page_messages = future.result()
             # Insert messages into the json file  
             ts = str(time.time()).replace('.', '_')
-            with open(f'{raw_data_file_path}_{ts}.json', 'w') as f:     
+            with open(f'{raw_data_dir}/raw_{ts}.json', 'w') as f:     
                 json.dump(page_messages, f, indent=4)       
 
 if __name__ == "__main__":
-    fetch_all_messages_threaded()
+    pull_data_threaded()

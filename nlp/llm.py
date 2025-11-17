@@ -1,33 +1,29 @@
-from ollama import chat, ChatResponse
+from ollama import chat, Client
+from dotenv import load_dotenv
+import os
 
-def query_llm_for_ner(prompt: str, model: str = "llama2") -> ChatResponse:
-    response = chat(model=model, messages=[
+load_dotenv()
+
+client_api_key = os.getenv("OLLAMA_API_KEY")
+
+client = Client(
+    host="https://ollama.com",
+    headers={"Authorization": f"Bearer {client_api_key}"}
+)
+
+def query_llm_for_qa(asked_question, top_sentences, model = "gpt-oss:20b-cloud"):
+    messages = [
         {
-            "role": "system", "content": "You are an expert named entity recognition (NER) model. \
-                Extract the name of the person from the given text. \
-                Return only the name without any additional information. \
-                Follow the following format: {\"Name\": \"<extracted_name>\"}. If no name is found, return {\"Name\": \"\"}."
+            "role": "system", "content": "You are a helpful assistant that provides answers based on the provided context.\
+                You will be given a question and some context sentences. Use the context to answer the question as accurately as possible.\
+                Respond only in following JSON format: {\"answer\": \"your answer here\"}\
+                If the context does not contain enough information, respond with: {\"answer\": \"Insufficient Information.\"}"
         },
         {
-            "role": "user", "content": prompt
+            "role": "user", "content": f"question:{asked_question}, context sentences:{top_sentences}"
         }
-    ])
-    return response['message']['content']
+    ]
 
-def query_llm_for_qa(user_name: str, asked_question: str, msg_history:str, model: str = "llama2") -> ChatResponse:
-    response = chat(model=model, messages=[
-        {
-            "role": "system", "content": "You are an expert who answers questions about users based on the that user's messaging history. \
-                You will be provided with a user's name and their messaging history. \
-                You are supposed to answer the asked question by referring to all of their messages.\
-                Only use the information present in the messaging history to answer the question. \
-                Provide concise and accurate answers.\
-                Follow the following format: {Answer: <your_answer_here>} \
-                If the answer is not present in the messaging history, return {Answer: UNKNOWN}.\
-                Only return the JSON object without any additional text."
-        },
-        {
-            "role": "user", "content": f"User's Name: {user_name}\nUser's Messaging History: {msg_history}\nQuestion: {asked_question}"
-        }
-    ])
+    response = client.chat(model, messages=messages, stream=False)
+        
     return response['message']['content']
