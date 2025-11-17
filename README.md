@@ -133,3 +133,18 @@ The table below summarizes the contribution of the top 5 most active members to 
 
 1. Use of ThreadPoolExecutor for pulling raw data in parallel with multiple workers.
 2. Vector index building strategy: concatenating `user_name + message` so semantic vector lookup is more accurate for user-scoped queries.
+
+## Health & Readiness
+
+The application exposes two lightweight endpoints useful for monitoring and orchestration:
+
+- `GET /health` — basic liveness check. Returns HTTP 200 with a JSON payload:
+   ```json
+   {"status": "ok"}
+   ```
+
+- `GET /ready` — readiness check. Verifies that the FAISS index and the sentences list are initialized and populated. Returns HTTP 200 with a JSON payload similar to:
+   ```json
+   {"status": "ready", "details": {"has_index": true, "has_sentences": true}}
+   ```
+   If the index or sentences aren't ready, `status` will be `not ready` and `details` will indicate which component is missing or include an `error` field when an exception occurs.
